@@ -2,6 +2,11 @@
 
 Game::Game()
 {
+	isRunning = false;
+	window = nullptr;
+	renderer = nullptr;
+	background = nullptr;
+	deck = nullptr;
 }
 
 Game::~Game()
@@ -35,7 +40,13 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 		return;
 	}
 	std::cout << "Renderer created" << std::endl;
+	
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+	background = TextureManager::LoadTexture("data/Background.jpg", renderer);
+
+	deck = new Deck();
+	deck->init(30, 30, renderer);
 
 	isRunning = true;
 }
@@ -55,12 +66,14 @@ void Game::handleEvents()
 
 void Game::update()
 {
-
+	deck->update();
 }
 
 void Game::render()
 {
 	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, background, 0, 0);
+	deck->render();
 	SDL_RenderPresent(renderer);
 }
 
@@ -68,6 +81,8 @@ void Game::clean()
 {
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
+	SDL_DestroyTexture(background);
+	delete deck;
 	SDL_Quit();
 	std::cout << "Game cleaned" << std::endl;
 }

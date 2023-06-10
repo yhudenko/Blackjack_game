@@ -3,6 +3,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <iostream>
+#include "TextureManager.h"
+#include "Deck.h"
 
 class Game
 {
@@ -22,6 +24,10 @@ private:
 	bool isRunning;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+
+	SDL_Texture* background;
+
+	Deck* deck;
 
 };
 

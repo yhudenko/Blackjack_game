@@ -142,11 +142,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Deck.cpp" />
+    <ClCompile Include="src\Card.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Deck.h" />
+    <ClInclude Include="src\Card.h" />
     <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\TextureManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\Background.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
