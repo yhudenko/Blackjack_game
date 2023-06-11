@@ -1,8 +1,15 @@
 #include "Card.h"
+#include "TextureManager.h"
+#include "Game.h"
+#include <string>
 
-Card::Card(int xPos, int yPos, int cardIndex, int suit, SDL_Renderer* renderer) : xPos_(xPos), yPos_(yPos), renderer_(renderer)
+const int CARD_HEIGHT = 140;
+const int CARD_WIDTH = 100;
+const std::string suitNames[]{ "spades", "hearts", "diamonds", "clubs" };
+
+Card::Card(int xPos, int yPos, int cardIndex, int suit) : xPos_(xPos), yPos_(yPos)
 {
-	const std::string suitNames[]{ "spades", "hearts", "diamonds", "clubs" };
+	
 	value = (cardIndex <= 10) ? cardIndex : 10;
 	std::string path = "data/Card_images/";
 	switch (cardIndex)
@@ -25,12 +32,12 @@ Card::Card(int xPos, int yPos, int cardIndex, int suit, SDL_Renderer* renderer) 
 	}
 	path += "_of_" + suitNames[suit] + ".png";
 
-	cardFaceTexture = TextureManager::LoadTexture(path.c_str(), renderer);
+	cardFaceTexture = TextureManager::LoadTexture(path.c_str());
 
-	srcRect.x = xPos;
-	srcRect.y = yPos;
-	srcRect.h = 175;
-	srcRect.w = 125;
+	cardRect.x = xPos;
+	cardRect.y = yPos;
+	cardRect.h = CARD_HEIGHT;
+	cardRect.w = CARD_WIDTH;
 }
 
 Card::~Card()
@@ -45,7 +52,7 @@ void Card::update()
 
 void Card::render()
 {
-	SDL_RenderCopy(renderer_, cardFaceTexture, NULL, &srcRect);
+	SDL_RenderCopy(Game::GetRenderer(), cardFaceTexture, NULL, &cardRect);
 }
 
 int Card::getValue()

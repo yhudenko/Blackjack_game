@@ -1,10 +1,12 @@
 #include "Game.h"
+#include "TextureManager.h"
+
+SDL_Window* Game::window = nullptr;
+SDL_Renderer* Game::renderer = nullptr;
 
 Game::Game()
 {
 	isRunning = false;
-	window = nullptr;
-	renderer = nullptr;
 	background = nullptr;
 	deck = nullptr;
 }
@@ -43,10 +45,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 	
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-	background = TextureManager::LoadTexture("data/Background.jpg", renderer);
+	background = TextureManager::LoadTexture("data/Background.jpg");
 
-	deck = new Deck();
-	deck->init(30, 30, renderer);
+	deck = new Deck(1080, 100);
 
 	isRunning = true;
 }
@@ -85,5 +86,15 @@ void Game::clean()
 	delete deck;
 	SDL_Quit();
 	std::cout << "Game cleaned" << std::endl;
+}
+
+SDL_Window* Game::GetWindow()
+{
+	return window;
+}
+
+SDL_Renderer* Game::GetRenderer()
+{
+	return renderer;
 }
 

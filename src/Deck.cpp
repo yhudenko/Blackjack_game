@@ -1,20 +1,6 @@
 #include "Deck.h"
 
-Deck::Deck()
-{
-    
-}
-
-Deck::~Deck()
-{
-    while (!cardDeck.empty()) {
-        Card* card = cardDeck.front();
-        cardDeck.pop_front();
-        delete card;
-    }
-}
-
-void Deck::init(int xPos, int yPos, SDL_Renderer* renderer)
+Deck::Deck(int xPos, int yPos)
 {
     xPos_ = xPos;
     yPos_ = yPos;
@@ -23,11 +9,20 @@ void Deck::init(int xPos, int yPos, SDL_Renderer* renderer)
     {
         for (int cardIndex = 1; cardIndex <= 13; ++cardIndex)
         {
-            cardDeck.push_back(new Card(xPos_ + xCardOffset, yPos_ - yCardOffset, cardIndex, suit, renderer));
+            cardDeck.push_back(new Card(xPos_ + xCardOffset, yPos_ - yCardOffset, cardIndex, suit));
             ++xCardOffset;
             ++yCardOffset;
         }
-        
+
+    }
+}
+
+Deck::~Deck()
+{
+    while (!cardDeck.empty()) {
+        Card* card = cardDeck.front();
+        cardDeck.pop_front();
+        delete card;
     }
 }
 

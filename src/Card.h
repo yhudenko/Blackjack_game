@@ -1,14 +1,11 @@
 #pragma once
 
-#include "TextureManager.h"
-#include <string>
-
-
+#include <SDL.h>
 
 class Card
 {
 public:
-	Card(int xPos, int yPos, int cardIndex, int suit, SDL_Renderer* renderer);
+	Card(int xPos, int yPos, int cardIndex, int suit);
 	~Card();
 
 	void update();
@@ -18,8 +15,7 @@ public:
 private:
 	int xPos_;
 	int yPos_;
-	SDL_Rect srcRect, destRect;
-	SDL_Renderer* renderer_;
+	SDL_Rect cardRect;
 	SDL_Texture* cardFaceTexture;
 	int value;
 };

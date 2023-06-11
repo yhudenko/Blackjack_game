@@ -1,9 +1,6 @@
 #pragma once
 
-#include <SDL.h>
-#include <SDL_image.h>
 #include <iostream>
-#include "TextureManager.h"
 #include "Deck.h"
 
 class Game
@@ -20,10 +17,13 @@ public:
 
 	bool running() { return isRunning; };
 
+	static SDL_Window* GetWindow();
+	static SDL_Renderer* GetRenderer();
+
 private:
 	bool isRunning;
-	SDL_Window* window;
-	SDL_Renderer* renderer;
+	static SDL_Window* window;
+	static SDL_Renderer* renderer;
 
 	SDL_Texture* background;
 

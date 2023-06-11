@@ -5,10 +5,9 @@
 class Deck
 {
 public:
-	Deck();
+	Deck(int xPos, int yPos);
 	~Deck();
 
-	void init(int xPos, int yPos, SDL_Renderer* renderer);
 	void update();
 	void render();
 
