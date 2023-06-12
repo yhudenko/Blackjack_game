@@ -10,3 +10,14 @@ SDL_Texture* TextureManager::LoadTexture(const char* fileName)
 
 	return texture;
 }
+
+SDL_Texture* TextureManager::GetTextLabel(const char* text, int size, SDL_Color* color)
+{
+	TTF_Font* font = TTF_OpenFont("data/arial.ttf", size);
+	SDL_Surface* tempSurf = TTF_RenderText_Blended(font, text, *color);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(Game::GetRenderer(), tempSurf);
+	SDL_FreeSurface(tempSurf);
+	TTF_CloseFont(font);
+	delete color;
+	return texture;
+}

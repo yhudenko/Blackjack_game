@@ -51,12 +51,13 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 	}
 	std::cout << "Renderer created" << std::endl;
 	
+	TTF_Init();
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
 	background = TextureManager::LoadTexture("data/Background.jpg");
 	mousePos = GetFillRect(0, 0, 1, 1);
-
-	buttons.push_back(new Button("Start", GetFillRect(540, 100, 200, 50)));
+	
+	buttons.push_back(new Button("Start", GetFillRect(540, 100, 200, 50), TextureManager::GetTextLabel("Start", 100, GetFillColor(0, 0, 0, 255))));
 
 	buttons.push_back(new Button("Settings", GetFillRect(10, 10, 50, 50), TextureManager::LoadTexture("data/settings.png")));
 
@@ -142,6 +143,16 @@ SDL_Rect* Game::GetFillRect(int x, int y, int w, int h)
 	rect->w = w;
 	rect->h = h;
 	return rect;
+}
+
+SDL_Color* Game::GetFillColor(int r, int g, int b, int a)
+{
+	SDL_Color* color = new SDL_Color;
+	color->r = r;
+	color->g = g;
+	color->b = b;
+	color->a = a;
+	return color;
 }
 
 

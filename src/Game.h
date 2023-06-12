@@ -1,5 +1,8 @@
 #pragma once
 
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <iostream>
 #include <vector>
 #include <map>
@@ -44,6 +47,6 @@ private:
 	std::vector< Button*> buttons;
 
 	SDL_Rect* GetFillRect(int x, int y, int w, int h);
-
+	SDL_Color* GetFillColor(int r, int g, int b, int a);
 };
 
