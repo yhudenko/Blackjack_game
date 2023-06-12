@@ -1,2 +1,8 @@
-﻿  Game.cpp
+﻿  main.cpp
+  Button.cpp
+  Card.cpp
+  Game.cpp
+  GameObject.cpp
+  TextureManager.cpp
+  Generating Code...
   blackjack_game.vcxproj -> D:\VS_projects\blackjack_game\x64\Debug\blackjack_game.exe

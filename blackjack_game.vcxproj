@@ -142,6 +142,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Button.cpp" />
+    <ClCompile Include="src\Hand.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Deck.cpp" />
     <ClCompile Include="src\Card.cpp" />
     <ClCompile Include="src\Game.cpp" />
@@ -149,6 +152,9 @@
     <ClCompile Include="src\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Button.h" />
+    <ClInclude Include="src\Hand.h" />
+    <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\Deck.h" />
     <ClInclude Include="src\Card.h" />
     <ClInclude Include="src\Game.h" />

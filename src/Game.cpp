@@ -3,6 +3,8 @@
 
 SDL_Window* Game::window = nullptr;
 SDL_Renderer* Game::renderer = nullptr;
+int Game::animationFrameRate = 60;
+SDL_Rect* Game::mousePos = nullptr;
 
 Game::Game()
 {
@@ -13,6 +15,12 @@ Game::Game()
 
 Game::~Game()
 {
+	SDL_DestroyWindow(window);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyTexture(background);
+	delete deck;
+	SDL_Quit();
+	std::cout << "Game cleaned" << std::endl;
 }
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, Uint32 flags)
@@ -46,8 +54,11 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
 	background = TextureManager::LoadTexture("data/Background.jpg");
+	mousePos = GetFillRect(0, 0, 1, 1);
 
-	deck = new Deck(1080, 100);
+	buttons.push_back(new Button("Start", GetFillRect(540, 100, 200, 50)));
+
+	buttons.push_back(new Button("Settings", GetFillRect(10, 10, 50, 50), TextureManager::LoadTexture("data/settings.png")));
 
 	isRunning = true;
 }
@@ -60,6 +71,26 @@ void Game::handleEvents()
 	{
 	case SDL_QUIT:
 		isRunning = false;
+		break;
+	case SDL_KEYDOWN:
+		switch (currentEvent.key.keysym.sym)
+		{
+		case SDLK_UP:
+			//Test
+			break;
+		}
+	case SDL_MOUSEBUTTONUP:
+		if(currentEvent.button.button == SDL_BUTTON_LEFT)
+			for (auto button : buttons)
+			{
+				if (button->isSelected)
+				{
+					if (button->name == "Start" && currentStage == gameStage::PRESTART)
+						StartGame();
+					
+				}
+			}
+		break;
 	default:
 		break;
 	}
@@ -67,25 +98,30 @@ void Game::handleEvents()
 
 void Game::update()
 {
-	deck->update();
+	SDL_GetMouseState(&mousePos->x, &mousePos->y);
+	if(deck) deck->update();
+	for (auto button : buttons)
+		button->update();
+	
 }
 
 void Game::render()
 {
 	SDL_RenderClear(renderer);
+
 	SDL_RenderCopy(renderer, background, 0, 0);
-	deck->render();
+	if (deck) deck->render();
+	for (auto button : buttons)
+		button->render();
+
 	SDL_RenderPresent(renderer);
 }
 
-void Game::clean()
+void Game::StartGame()
 {
-	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyTexture(background);
-	delete deck;
-	SDL_Quit();
-	std::cout << "Game cleaned" << std::endl;
+	currentStage = gameStage::DISTRIBUTION;
+	deck = new Deck(1080, 100);
+
 }
 
 SDL_Window* Game::GetWindow()
@@ -97,4 +133,16 @@ SDL_Renderer* Game::GetRenderer()
 {
 	return renderer;
 }
+
+SDL_Rect* Game::GetFillRect(int x, int y, int w, int h)
+{
+	SDL_Rect* rect = new SDL_Rect;
+	rect->x = x;
+	rect->y = y;
+	rect->w = w;
+	rect->h = h;
+	return rect;
+}
+
+
 

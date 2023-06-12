@@ -1,15 +1,13 @@
 #include "Deck.h"
 
-Deck::Deck(int xPos, int yPos)
+Deck::Deck(const int xPos, const int yPos)
 {
-    xPos_ = xPos;
-    yPos_ = yPos;
     int xCardOffset = 0, yCardOffset = 0;
     for (int suit = 0; suit < 4; ++suit)
     {
         for (int cardIndex = 1; cardIndex <= 13; ++cardIndex)
         {
-            cardDeck.push_back(new Card(xPos_ + xCardOffset, yPos_ - yCardOffset, cardIndex, suit));
+            cardDeck.push_back(new Card(xPos + xCardOffset, yPos - yCardOffset, cardIndex, suit));
             ++xCardOffset;
             ++yCardOffset;
         }
@@ -37,4 +35,11 @@ void Deck::render()
     {
         card->render();
     }
+}
+
+Card* Deck::GetCard()
+{
+    Card* tempCard = cardDeck.back();
+    cardDeck.pop_back();
+    return tempCard;
 }
