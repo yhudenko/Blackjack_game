@@ -9,6 +9,7 @@
 #include "Deck.h"
 #include "Hand.h"
 #include "Button.h"
+#include "Texture.h"
 
 class Game
 {
@@ -31,22 +32,20 @@ public:
 
 private:
 	bool isRunning;
-	enum gameStage
+	enum class gameStage
 	{
 		PRESTART = 0,
 		DISTRIBUTION,
 		TURNS,
 		RESULTS
-	}currentStage = PRESTART;
+	}currentStage = gameStage::PRESTART;
 	static SDL_Window* window;
 	static SDL_Renderer* renderer;
-	SDL_Texture* background;
+	Texture* background;
 
 	Deck* deck;
 	std::vector<Hand*> hands;
-	std::vector< Button*> buttons;
+	std::vector<Button*> buttons;
 
-	SDL_Rect* GetFillRect(int x, int y, int w, int h);
-	SDL_Color* GetFillColor(int r, int g, int b, int a);
 };
 

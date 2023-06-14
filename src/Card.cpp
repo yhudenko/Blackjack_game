@@ -1,17 +1,12 @@
 #include "Card.h"
-#include "TextureManager.h"
 #include "Game.h"
 #include <string>
 
-const int CARD_HEIGHT = 140;
-const int CARD_WIDTH = 100;
+
 const std::string suitNames[]{ "spades", "hearts", "diamonds", "clubs" };
 
-Card::Card(int xPos, int yPos, int cardIndex, int suit) : GameObject(xPos, yPos), isFaceSide(false)
+Card::Card(SDL_Rect* cardRect, int cardIndex, int suit, Texture* backSideTexture) : GameObject(cardRect), isFaceSide(false), cardBackTexture(backSideTexture)
 {
-	objRect.h = CARD_HEIGHT;
-	objRect.w = CARD_WIDTH;
-
 	value = (cardIndex <= 10) ? cardIndex : 10;
 	
 	std::string path = "data/Card_images/";
@@ -35,28 +30,27 @@ Card::Card(int xPos, int yPos, int cardIndex, int suit) : GameObject(xPos, yPos)
 	}
 	path += "_of_" + suitNames[suit] + ".png";
 
-	cardFaceTexture = TextureManager::LoadTexture(path.c_str());
-
-	
+	cardFaceTexture = new Texture(path.c_str());
 }
 
 Card::~Card()
 {
-	SDL_DestroyTexture(cardFaceTexture);
+	cardBackTexture = nullptr;
+	delete cardFaceTexture;
+
 }
 
 void Card::update()
 {
-	GameObject::update();
+	UpdateLocation();
 }
 
 void Card::render()
 {
 	if(isFaceSide)
-		SDL_RenderCopy(Game::GetRenderer(), cardFaceTexture, NULL, &objRect);
+		SDL_RenderCopy(Game::GetRenderer(), cardFaceTexture->texture, cardFaceTexture->sRect, objRect);
 	else
-		SDL_RenderCopy(Game::GetRenderer(), cardFaceTexture, NULL, &objRect);
-	UpdateLocation();
+		SDL_RenderCopy(Game::GetRenderer(), cardBackTexture->texture, cardBackTexture->sRect, objRect);
 }
 
 int Card::getValue()

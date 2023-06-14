@@ -5,17 +5,18 @@
 class Deck
 {
 public:
-	Deck(const int xPos = 0, const int yPos = 0);
+	Deck(const int xPos, const int yPos);
 	~Deck();
 
 	void update();
 	void render();
 
 	Card* GetCard();
-
-	static SDL_Texture* cardBackSideTexture;
+	void ChangeCardBackSide();
 
 private:
 	std::deque<Card*> cardDeck;
+	int cardBackSideIndex = 0;
+	Texture* cardBackSideTexture;
 };
 

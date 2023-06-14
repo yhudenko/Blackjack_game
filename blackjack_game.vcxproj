@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaseObject.cpp" />
     <ClCompile Include="src\Button.cpp" />
     <ClCompile Include="src\Hand.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
@@ -149,16 +150,17 @@
     <ClCompile Include="src\Card.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\TextureManager.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\BaseObject.h" />
     <ClInclude Include="src\Button.h" />
     <ClInclude Include="src\Hand.h" />
     <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\Deck.h" />
     <ClInclude Include="src\Card.h" />
     <ClInclude Include="src\Game.h" />
-    <ClInclude Include="src\TextureManager.h" />
+    <ClInclude Include="src\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\Background.jpg" />

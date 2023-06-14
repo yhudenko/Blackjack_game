@@ -3,20 +3,22 @@
 #include <SDL.h>
 #include <queue>
 #include "GameObject.h"
+#include "Texture.h"
 
 class Card : public GameObject
 {
 public:
-	Card(int xPos = 0, int yPos = 0, int cardIndex = 1, int suit = 0);
+	Card(SDL_Rect* cardRect, int cardIndex, int suit, Texture* backSideTexture);
 	~Card();
 
-	void update();
-	void render();
+	void update() override;
+	void render() override;
 
 	int getValue();
 
 private:
-	SDL_Texture* cardFaceTexture;
+	Texture* cardFaceTexture;
+	Texture* cardBackTexture;
 	bool isFaceSide;
 	int value;
 

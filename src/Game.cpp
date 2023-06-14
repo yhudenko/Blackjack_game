@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "TextureManager.h"
 
 SDL_Window* Game::window = nullptr;
 SDL_Renderer* Game::renderer = nullptr;
@@ -15,9 +14,9 @@ Game::Game()
 
 Game::~Game()
 {
-	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
-	SDL_DestroyTexture(background);
+	SDL_DestroyWindow(window);
+	delete background;
 	delete deck;
 	SDL_Quit();
 	std::cout << "Game cleaned" << std::endl;
@@ -54,12 +53,23 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 	TTF_Init();
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-	background = TextureManager::LoadTexture("data/Background.jpg");
-	mousePos = GetFillRect(0, 0, 1, 1);
+	mousePos = new SDL_Rect{ 0,0,1,1 };
+	background = new Texture("data/Background.jpg");
 	
-	buttons.push_back(new Button("Start", GetFillRect(540, 100, 200, 50), TextureManager::GetTextLabel("Start", 100, GetFillColor(0, 0, 0, 255))));
+	Button* tempButton = nullptr;
 
-	buttons.push_back(new Button("Settings", GetFillRect(10, 10, 50, 50), TextureManager::LoadTexture("data/settings.png")));
+	tempButton = new Button("Start", new SDL_Rect{ 540,100,200,50 });
+	tempButton->AddTexture(new Texture(200, 50, SDL_Color{ 255,229,204 }));
+	tempButton->AddTexture(new Texture("Start", 100, { 0, 0, 0, 255 }));
+	buttons.push_back(tempButton);
+	
+	tempButton = new Button("Settings", new SDL_Rect{ 10,10,50,50 });
+	tempButton->AddTexture(new Texture("data/settings.png", nullptr));
+	buttons.push_back(tempButton);
+
+	tempButton = new Button("ChangeBackSide", new SDL_Rect{ 70,10,150,50 });
+	tempButton->AddTexture(new Texture("Change back side", 50, { 0,0,0,255 }));
+	buttons.push_back(tempButton);
 
 	isRunning = true;
 }
@@ -88,7 +98,8 @@ void Game::handleEvents()
 				{
 					if (button->name == "Start" && currentStage == gameStage::PRESTART)
 						StartGame();
-					
+					if (button->name == "ChangeBackSide")
+						if(deck) deck->ChangeCardBackSide();
 				}
 			}
 		break;
@@ -110,7 +121,7 @@ void Game::render()
 {
 	SDL_RenderClear(renderer);
 
-	SDL_RenderCopy(renderer, background, 0, 0);
+	SDL_RenderCopy(renderer, background->texture, background->sRect, 0);
 	if (deck) deck->render();
 	for (auto button : buttons)
 		button->render();
@@ -135,25 +146,6 @@ SDL_Renderer* Game::GetRenderer()
 	return renderer;
 }
 
-SDL_Rect* Game::GetFillRect(int x, int y, int w, int h)
-{
-	SDL_Rect* rect = new SDL_Rect;
-	rect->x = x;
-	rect->y = y;
-	rect->w = w;
-	rect->h = h;
-	return rect;
-}
-
-SDL_Color* Game::GetFillColor(int r, int g, int b, int a)
-{
-	SDL_Color* color = new SDL_Color;
-	color->r = r;
-	color->g = g;
-	color->b = b;
-	color->a = a;
-	return color;
-}
 
 
 

@@ -1,10 +1,9 @@
 #include "Hand.h"
 
-Hand::Hand(const int xPos, const int yPos, HandType type)
+Hand::Hand(const int xPos, const int yPos)
 {
 	handRect.x = xPos;
 	handRect.y = yPos;
-	handType = type;
 }
 
 Hand::~Hand()

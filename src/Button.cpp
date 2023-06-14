@@ -1,37 +1,40 @@
 #include "Button.h"
 #include "Game.h"
 
-Button::Button(std::string buttonName, SDL_Rect* destinationRect, SDL_Texture* buttonTexture, SDL_Rect* sourceRect)
+Button::Button(std::string buttonName, SDL_Rect* destinationRect) : BaseObject(destinationRect), name(buttonName)
 {
-	name = buttonName;
-	dRect = destinationRect;
-	texture = buttonTexture;
-	sRect = sourceRect;
+	
 }
 
 Button::~Button()
 {
-	SDL_DestroyTexture(texture);
-	delete sRect;
-	delete dRect;
+	for (auto texture : textureLayers)
+		texture->~Texture();
 }
 
 void Button::update()
 {
 	if (isHidden)
 		return;
-	isSelected = SDL_HasIntersection(dRect, Game::mousePos);
+	isSelected = SDL_HasIntersection(objRect, Game::mousePos);
 }
 
 void Button::render()
 {
 	if (isHidden)
 		return;
-	if(texture)
-		SDL_RenderCopy(Game::GetRenderer(), texture, sRect, dRect);
+	if(textureLayers.empty())
+		SDL_RenderDrawRect(Game::GetRenderer(), objRect);
 	else
-	{
-		SDL_RenderDrawRect(Game::GetRenderer(), dRect);
-	}
+		for (auto texture : textureLayers)
+			SDL_RenderCopy(Game::GetRenderer(), texture->texture, texture->sRect, objRect);
+}
+
+void Button::AddTexture(Texture* texture, bool bottomLayer)
+{
+	if (bottomLayer)
+		textureLayers.push_front(texture);
+	else
+		textureLayers.push_back(texture);
 }
 

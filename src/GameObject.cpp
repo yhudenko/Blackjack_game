@@ -1,32 +1,27 @@
 #include "GameObject.h"
 #include "Game.h"
 
-GameObject::GameObject(int xPos, int yPos)
+GameObject::GameObject(SDL_Rect* rect) : BaseObject(rect)
 {
-	objRect.x = xPos;
-	objRect.y = yPos;
+	
 }
 
 GameObject::~GameObject()
 {
-
-}
-
-void GameObject::update()
-{
-	UpdateLocation();
+	while (!pathPoints.empty())
+		pathPoints.pop();
 }
 
 void GameObject::move(int targetX, int targetY)
 {
-	int dx = targetX - objRect.x;
-	int dy = targetY - objRect.y;
+	int dx = targetX - objRect->x;
+	int dy = targetY - objRect->y;
 
 	float stepX = static_cast<float>(dx) / Game::animationFrameRate;
 	float stepY = static_cast<float>(dy) / Game::animationFrameRate;
 
-	float x = static_cast<float>(objRect.x);
-	float y = static_cast<float>(objRect.y);
+	float x = static_cast<float>(objRect->x);
+	float y = static_cast<float>(objRect->y);
 
 	for (int i = 0; i <= Game::animationFrameRate; i++)
 	{
@@ -44,7 +39,7 @@ void GameObject::UpdateLocation()
 	if (pathPoints.empty())
 		return;
 	pathPoints.front().first;
-	objRect.x = pathPoints.front().first;
-	objRect.y = pathPoints.front().second;
+	objRect->x = pathPoints.front().first;
+	objRect->y = pathPoints.front().second;
 	pathPoints.pop();
 }
