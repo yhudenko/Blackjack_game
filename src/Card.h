@@ -1,9 +1,7 @@
 #pragma once
 
-#include <SDL.h>
 #include <queue>
 #include "GameObject.h"
-#include "Texture.h"
 
 class Card : public GameObject
 {
@@ -18,10 +16,8 @@ public:
 	void changeLocation(int xPos, int yPos);
 
 	bool isFaceSide = false;
-	bool isMoving = false;
 
 private:
-	Texture* cardFaceTexture;
 	Texture* cardBackTexture;
 	int value = 0;
 

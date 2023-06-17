@@ -1,9 +1,9 @@
 #pragma once
 #include <SDL.h>
-#include <string>
 #include "BaseObject.h"
 #include "Texture.h"
 #include <deque>
+#include <string>
 
 class Button : public BaseObject
 {
@@ -13,13 +13,16 @@ public:
 
 	void update() override;
 	void render() override;
-	void AddTexture(Texture* texture, bool bottomLayer = false);
+	void AddBackground(int width, int height, SDL_Color color);
+	void AddImage(const char* path, SDL_Rect* sRect = nullptr, SDL_Rect* dRect = nullptr);
+	void AddLabel(const char* text, SDL_Color color);
+	
 
 	bool isSelected = false;
 	bool isHidden = false;
 	std::string name = "";
 
 protected:
-	std::deque<Texture*> textureLayers;
+	std::deque<std::pair<Texture*, SDL_Rect*>> textureLayers;
 };
 

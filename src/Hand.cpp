@@ -2,7 +2,10 @@
 
 Hand::Hand(SDL_Rect* dRect) : BaseObject(dRect)
 {
-
+	for (int i = 0; i < 10; ++i)
+	{
+		//chips.push_back(new Chip(dRect));
+	}
 }
 
 Hand::~Hand()

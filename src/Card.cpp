@@ -30,14 +30,12 @@ Card::Card(SDL_Rect* cardRect, int cardIndex, int suit, Texture* backSideTexture
 	}
 	path += "_of_" + suitNames[suit] + ".png";
 
-	cardFaceTexture = new Texture(path.c_str());
+	objTexture = new Texture(path.c_str());
 }
 
 Card::~Card()
 {
 	cardBackTexture = nullptr;
-	delete cardFaceTexture;
-
 }
 
 void Card::update()
@@ -48,7 +46,7 @@ void Card::update()
 void Card::render()
 {
 	if(isFaceSide)
-		SDL_RenderCopy(Game::GetRenderer(), cardFaceTexture->texture, cardFaceTexture->sRect, objRect);
+		SDL_RenderCopy(Game::GetRenderer(), objTexture->texture, objTexture->sRect, objRect);
 	else
 		SDL_RenderCopy(Game::GetRenderer(), cardBackTexture->texture, cardBackTexture->sRect, objRect);
 }

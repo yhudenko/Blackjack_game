@@ -1,16 +1,2 @@
-﻿  main.cpp
-  Bot.cpp
-  Button.cpp
-  Card.cpp
-  Dealer.cpp
-D:\VS_projects\blackjack_game\blackjack_game\src\Dealer.cpp(19,84): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-D:\VS_projects\blackjack_game\blackjack_game\src\Dealer.cpp(38,84): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  Game.cpp
-  GameObject.cpp
-  Hand.cpp
-D:\VS_projects\blackjack_game\blackjack_game\src\Hand.cpp(33,83): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-D:\VS_projects\blackjack_game\blackjack_game\src\Hand.cpp(44,9): warning C4553: '==': result of expression not used; did you intend '='?
-  Player.cpp
-  Texture.cpp
-  Generating Code...
+﻿  Texture.cpp
   blackjack_game.vcxproj -> D:\VS_projects\blackjack_game\x64\Debug\blackjack_game.exe

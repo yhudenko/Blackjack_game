@@ -59,27 +59,29 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 	background = new Texture("data/Background.jpg");
 	
 	Button* tempButton = nullptr;
-
+	
 	tempButton = new Button("Start", new SDL_Rect{ 540,100,200,50 });
-	tempButton->AddTexture(new Texture(200, 50, SDL_Color{ 255,229,204 }));
-	tempButton->AddTexture(new Texture("Start", 100, { 0, 0, 0, 255 }));
+	tempButton->AddBackground(200, 50, SDL_Color{ 255,229,204 });
+	tempButton->AddLabel("Start", { 0, 0, 0, 255 });
 	buttons.push_back(tempButton);
 	
 	tempButton = new Button("Settings", new SDL_Rect{ 10,10,50,50 });
-	tempButton->AddTexture(new Texture("data/settings.png", nullptr));
+	tempButton->AddImage("data/settings.png");
 	buttons.push_back(tempButton);
 
 	tempButton = new Button("ChangeBackSide", new SDL_Rect{ 70,10,150,50 });
-	tempButton->AddTexture(new Texture("Change back side", 50, { 0,0,0,255 }));
+	tempButton->AddLabel("Change back side", { 0,0,0,255 });
 	buttons.push_back(tempButton);
 
 	tempButton = new Button("Hit", new SDL_Rect{ 1080,500,100,50 });
-	tempButton->AddTexture(new Texture("Hit", 50, { 0,0,0,255 }));
+	tempButton->AddLabel("Hit", { 0,0,0,255 });
 	buttons.push_back(tempButton);
 
 	tempButton = new Button("Stand", new SDL_Rect{ 1080,600,100,50 });
-	tempButton->AddTexture(new Texture("Stand", 50, { 0,0,0,255 }));
+	tempButton->AddLabel("Stand", { 0,0,0,255 });
 	buttons.push_back(tempButton);
+
+	tempButton = nullptr;
 
 	hands.push_back(new Bot(new SDL_Rect{ 400,200,100,100 }));
 	playerIndex = 1;

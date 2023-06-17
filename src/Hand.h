@@ -1,8 +1,10 @@
 #pragma once
+
+#include <vector>
 #include "Card.h"
 #include "BaseObject.h"
 #include "Deck.h"
-#include <vector>
+#include "Chip.h"
 
 enum class HandStatus
 {
@@ -33,6 +35,7 @@ public:
 	void Stand();
 protected:
 	std::vector<Card*> cards;
+	std::vector<Chip*> chips;
 
 	int calculateValue();
 };
