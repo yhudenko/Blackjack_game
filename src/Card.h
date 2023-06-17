@@ -15,12 +15,15 @@ public:
 	void render() override;
 
 	int getValue();
+	void changeLocation(int xPos, int yPos);
+
+	bool isFaceSide = false;
+	bool isMoving = false;
 
 private:
 	Texture* cardFaceTexture;
 	Texture* cardBackTexture;
-	bool isFaceSide;
-	int value;
+	int value = 0;
 
 };
 

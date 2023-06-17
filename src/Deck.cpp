@@ -1,11 +1,14 @@
 #include "Deck.h"
 #include <map>
+#include <algorithm>
+#include <random>
+#include <chrono>
 
 std::map<int, SDL_Rect> dictionaryCardBackSideRect{ {0,  {0, 0, 932, 1448}}, {1, {1070, 0, 932, 1448}}, {2, {2140, 0, 932, 1448}} };
 const int CARD_HEIGHT = 140;
 const int CARD_WIDTH = 100;
 
-Deck::Deck(const int xPos, const int yPos)
+Deck::Deck(const int xPos, const int yPos) : BaseObject(new SDL_Rect{ xPos,yPos,1,1 })
 {
     cardBackSideTexture = new Texture("data/Card_back.png", new SDL_Rect(dictionaryCardBackSideRect[cardBackSideIndex]));
 
@@ -18,8 +21,8 @@ Deck::Deck(const int xPos, const int yPos)
             ++xCardOffset;
             ++yCardOffset;
         }
-
     }
+    shuffleDeck();
 }
 
 Deck::~Deck()
@@ -43,10 +46,13 @@ void Deck::render()
         card->render();
 }
 
-Card* Deck::GetCard()
+Card* Deck::GetCard(bool hidden)
 {
     Card* tempCard = cardDeck.back();
     cardDeck.pop_back();
+
+    tempCard->isFaceSide = !hidden;
+
     return tempCard;
 }
 
@@ -64,4 +70,19 @@ void Deck::ChangeCardBackSide()
     cardBackSideTexture->sRect->y = search->second.y;
     cardBackSideTexture->sRect->w = search->second.w;
     cardBackSideTexture->sRect->h = search->second.h;
+}
+
+void Deck::shuffleDeck()
+{
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine rng(seed);
+    std::shuffle(cardDeck.begin(), cardDeck.end(), rng);
+
+    int xCardOffset = 0, yCardOffset = 0;
+    for (auto card : cardDeck)
+    {
+        card->changeLocation(objRect->x + xCardOffset, objRect->y + yCardOffset);
+        ++xCardOffset;
+        ++yCardOffset;
+    }
 }

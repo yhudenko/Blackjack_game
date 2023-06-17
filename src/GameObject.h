@@ -15,6 +15,6 @@ public:
 protected:
 	std::queue<std::pair<int, int>> pathPoints;
 
-	void UpdateLocation();
+	bool UpdateLocation();
 };
 

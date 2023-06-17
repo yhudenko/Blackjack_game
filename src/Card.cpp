@@ -5,7 +5,7 @@
 
 const std::string suitNames[]{ "spades", "hearts", "diamonds", "clubs" };
 
-Card::Card(SDL_Rect* cardRect, int cardIndex, int suit, Texture* backSideTexture) : GameObject(cardRect), isFaceSide(false), cardBackTexture(backSideTexture)
+Card::Card(SDL_Rect* cardRect, int cardIndex, int suit, Texture* backSideTexture) : GameObject(cardRect), cardBackTexture(backSideTexture)
 {
 	value = (cardIndex <= 10) ? cardIndex : 10;
 	
@@ -42,7 +42,7 @@ Card::~Card()
 
 void Card::update()
 {
-	UpdateLocation();
+	isMoving = UpdateLocation();
 }
 
 void Card::render()
@@ -56,6 +56,12 @@ void Card::render()
 int Card::getValue()
 {
 	return value;
+}
+
+void Card::changeLocation(int xPos, int yPos)
+{
+	objRect->x = xPos;
+	objRect->y = yPos;
 }
 
 

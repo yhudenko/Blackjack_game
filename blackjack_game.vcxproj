@@ -142,6 +142,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Chip.cpp" />
+    <ClCompile Include="src\Bot.cpp" />
+    <ClCompile Include="src\Dealer.cpp" />
+    <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\BaseObject.cpp" />
     <ClCompile Include="src\Button.cpp" />
     <ClCompile Include="src\Hand.cpp" />
@@ -153,6 +157,10 @@
     <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Chip.h" />
+    <ClInclude Include="src\Bot.h" />
+    <ClInclude Include="src\Dealer.h" />
+    <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\BaseObject.h" />
     <ClInclude Include="src\Button.h" />
     <ClInclude Include="src\Hand.h" />

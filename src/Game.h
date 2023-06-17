@@ -22,7 +22,6 @@ public:
 	void update();
 	void render();
 
-	void StartGame();
 	bool running() { return isRunning; };
 
 	static SDL_Window* GetWindow();
@@ -31,7 +30,7 @@ public:
 	static SDL_Rect* mousePos;
 
 private:
-	bool isRunning;
+	bool isRunning = false;
 	enum class gameStage
 	{
 		PRESTART = 0,
@@ -41,11 +40,18 @@ private:
 	}currentStage = gameStage::PRESTART;
 	static SDL_Window* window;
 	static SDL_Renderer* renderer;
-	Texture* background;
+	Texture* background = nullptr;
 
-	Deck* deck;
+	Deck* deck = nullptr;
 	std::vector<Hand*> hands;
+	int handIndex = 0;
+	int playerIndex = -1;
 	std::vector<Button*> buttons;
+
+	void handSequence();
+	void StartGame();
+	void NextDistribution();
+	void NextTurn();
 
 };
 

@@ -34,12 +34,13 @@ void GameObject::move(int targetX, int targetY)
 	}
 }
 
-void GameObject::UpdateLocation()
+bool GameObject::UpdateLocation()
 {
 	if (pathPoints.empty())
-		return;
+		return false;
 	pathPoints.front().first;
 	objRect->x = pathPoints.front().first;
 	objRect->y = pathPoints.front().second;
 	pathPoints.pop();
+	return true;
 }

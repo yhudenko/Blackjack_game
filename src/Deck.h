@@ -2,21 +2,23 @@
 #include "Card.h"
 #include  <deque>
 
-class Deck
+class Deck : public BaseObject
 {
 public:
 	Deck(const int xPos, const int yPos);
 	~Deck();
 
-	void update();
-	void render();
+	void update() override;
+	void render() override;
 
-	Card* GetCard();
+	Card* GetCard(bool hidden = false);
 	void ChangeCardBackSide();
 
 private:
 	std::deque<Card*> cardDeck;
 	int cardBackSideIndex = 0;
 	Texture* cardBackSideTexture;
+
+	void shuffleDeck();
 };
 
