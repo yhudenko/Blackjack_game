@@ -8,9 +8,9 @@ std::map<int, SDL_Rect> dictionaryCardBackSideRect{ {0,  {0, 0, 932, 1448}}, {1,
 const int CARD_HEIGHT = 140;
 const int CARD_WIDTH = 100;
 
-Deck::Deck(const int xPos, const int yPos) : BaseObject(new SDL_Rect{ xPos,yPos,1,1 })
+Deck::Deck(const int xPos, const int yPos) : BaseObject(new SDL_Rect{ xPos,yPos,CARD_WIDTH,CARD_HEIGHT })
 {
-    cardBackSideTexture = new Texture("data/Card_back.png", new SDL_Rect(dictionaryCardBackSideRect[cardBackSideIndex]));
+    cardBackSideTexture = new Texture(objRect, "data/Card_back.png", new SDL_Rect(dictionaryCardBackSideRect[cardBackSideIndex]));
 
     int xCardOffset = 0, yCardOffset = 0;
     for (int suit = 0; suit < 4; ++suit)
@@ -66,15 +66,12 @@ void Deck::ChangeCardBackSide()
         search = dictionaryCardBackSideRect.find(cardBackSideIndex);
     }
 
-    cardBackSideTexture->sRect->x = search->second.x;
-    cardBackSideTexture->sRect->y = search->second.y;
-    cardBackSideTexture->sRect->w = search->second.w;
-    cardBackSideTexture->sRect->h = search->second.h;
+    cardBackSideTexture->changeSRect(search->second);
 }
 
 void Deck::shuffleDeck()
 {
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    auto seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine rng(seed);
     std::shuffle(cardDeck.begin(), cardDeck.end(), rng);
 

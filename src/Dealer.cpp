@@ -16,7 +16,7 @@ bool Dealer::Distribution(Deck* deck)
 	{
 	case 0:
 		cards.push_back(deck->GetCard(true));
-		cards.back()->move(objRect->x + 30 * cards.size(), objRect->y + 30 * cards.size());
+		cards.back()->move(objRect->x + 30 * static_cast<int>(cards.size()), objRect->y + 30 * static_cast<int>(cards.size()));
 		break;
 	case 1:
 		Hit(deck);
@@ -35,7 +35,7 @@ void Dealer::Turn(Deck* deck)
 	if (calculateValue() < 17)
 	{
 		cards.push_back(deck->GetCard());
-		cards.back()->move(objRect->x + 30 * cards.size(), objRect->y + 30 * cards.size());
+		cards.back()->move(objRect->x + 30 * static_cast<int>(cards.size()), objRect->y + 30 * static_cast<int>(cards.size()));
 	}
 	else
 		Stand();

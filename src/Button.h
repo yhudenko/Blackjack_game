@@ -13,16 +13,14 @@ public:
 
 	void update() override;
 	void render() override;
-	void AddBackground(int width, int height, SDL_Color color);
-	void AddImage(const char* path, SDL_Rect* sRect = nullptr, SDL_Rect* dRect = nullptr);
-	void AddLabel(const char* text, SDL_Color color);
-	
+
+	void AddTexture(Texture* texture);	
 
 	bool isSelected = false;
 	bool isHidden = false;
 	std::string name = "";
 
 protected:
-	std::deque<std::pair<Texture*, SDL_Rect*>> textureLayers;
+	std::deque<Texture*> textureLayers;
 };
 

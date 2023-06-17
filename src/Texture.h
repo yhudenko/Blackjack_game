@@ -5,12 +5,19 @@
 class Texture
 {
 public:
-	Texture(const char* imagePath, SDL_Rect* imageSRect = nullptr);
-	Texture(const char* labelText, SDL_Rect* size, SDL_Color color);
-	Texture(int width, int height, SDL_Color color);
+	Texture(SDL_Rect* rect, const char* imagePath, SDL_Rect* imageSRect = nullptr);
+	Texture(SDL_Rect* rect, const char* labelText, SDL_Color color, float fillPercent = 0.9f);
+	Texture(SDL_Rect* rect, SDL_Color color);
 	~Texture();
 
-	SDL_Rect* sRect;
-	SDL_Texture* texture;	
+	void render();
+	void render(SDL_Rect* rect);
+	void changeSRect(SDL_Rect& rect);
+
+protected:
+	SDL_Rect* sRect = nullptr;
+	SDL_Rect* dRect = nullptr;
+	SDL_Rect* offsetRect = nullptr;
+	SDL_Texture* texture = nullptr;
 };
 

@@ -3,16 +3,19 @@
 #include <iostream>
 #include <SDL_ttf.h>
 
-Texture::Texture(const char* imagePath, SDL_Rect* imageSRect) : sRect(imageSRect)
+Texture::Texture(SDL_Rect* rect, const char* imagePath, SDL_Rect* imageSRect) : dRect(rect), sRect(imageSRect)
 {
 	SDL_Surface* tempSurface = IMG_Load(imagePath);
 	texture = SDL_CreateTextureFromSurface(Game::GetRenderer(), tempSurface);
 	SDL_FreeSurface(tempSurface);
 }
 
-Texture::Texture(const char* labelText, SDL_Rect* size, SDL_Color color)
+Texture::Texture(SDL_Rect* rect, const char* labelText, SDL_Color color, float fillPercent) : dRect(rect)
 {
 	sRect = nullptr;
+
+	int maxH = rect->h * fillPercent;
+	int maxW = rect->w * fillPercent;
 	
 	int minSize = 20;  // Minimum font size
 	int maxSize = 200; // Maximum font size
@@ -42,12 +45,16 @@ Texture::Texture(const char* labelText, SDL_Rect* size, SDL_Color color)
 			break;
 		}
 
-		if (textWidth <= size->w && textHeight <= size->h)
+		if (textWidth <= maxH && textHeight <= maxW)
 			minSize = fontSize + 1;
 		else 
 			maxSize = fontSize - 1;
+		std::cout << fontSize << std::endl;
 	}
-	TTF_SizeText(font, labelText, &(size->w), &(size->h));
+	int wSize = 0, hSize = 0;
+	TTF_SizeText(font, labelText, &wSize, &hSize);
+
+	offsetRect = new SDL_Rect{ (rect->w - wSize) / 2, (rect->h - hSize) / 2, wSize - rect->w , hSize - rect->h };
 
 	SDL_Surface* tempSurf = TTF_RenderText_Blended(font, labelText, color);
 	texture = SDL_CreateTextureFromSurface(Game::GetRenderer(), tempSurf);
@@ -55,10 +62,9 @@ Texture::Texture(const char* labelText, SDL_Rect* size, SDL_Color color)
 	TTF_CloseFont(font);
 }
 
-Texture::Texture(int width, int height, SDL_Color color)
+Texture::Texture(SDL_Rect* rect, SDL_Color color) : dRect(rect)
 {
-	sRect = nullptr;
-	SDL_Surface* surface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+	SDL_Surface* surface = SDL_CreateRGBSurface(0, rect->w, rect->h, 32, 0, 0, 0, 0);
 	SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, color.r, color.g, color.b, color.a));
 	texture = SDL_CreateTextureFromSurface(Game::GetRenderer(), surface);
 }
@@ -67,5 +73,39 @@ Texture::~Texture()
 {
 	delete sRect;
 	SDL_DestroyTexture(texture);
+}
+
+void Texture::render()
+{
+	if (offsetRect)
+	{
+		SDL_Rect destRect = { dRect->x + offsetRect->x,  dRect->y + offsetRect->y, dRect->w + offsetRect->w, dRect->h + offsetRect->h };
+		SDL_RenderCopy(Game::GetRenderer(), texture, sRect, &destRect);
+	}
+	else
+	{
+		SDL_RenderCopy(Game::GetRenderer(), texture, sRect, dRect);
+	}
+}
+
+void Texture::render(SDL_Rect* rect)
+{
+	if (offsetRect)
+	{
+		SDL_Rect destRect = { rect->x + offsetRect->x,  rect->y + offsetRect->y, rect->w + offsetRect->w, rect->h + offsetRect->h };
+		SDL_RenderCopy(Game::GetRenderer(), texture, sRect, &destRect);
+	}
+	else
+	{
+		SDL_RenderCopy(Game::GetRenderer(), texture, sRect, rect);
+	}
+}
+
+void Texture::changeSRect(SDL_Rect& rect)
+{
+	sRect->x = rect.x;
+	sRect->y = rect.y;
+	sRect->w = rect.w;
+	sRect->h = rect.h;
 }
 

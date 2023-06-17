@@ -44,7 +44,7 @@ void Hand::Hit(Deck* deck)
 
 void Hand::Stand()
 {
-	status == HandStatus::WAITRESULT;
+	status = HandStatus::WAITRESULT;
 }
 
 int Hand::calculateValue()

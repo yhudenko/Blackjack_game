@@ -56,29 +56,35 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
 	mousePos = new SDL_Rect{ 0,0,1,1 };
-	background = new Texture("data/Background.jpg");
+	background = new Texture(nullptr, "data/Background.jpg");
 	
+	SDL_Rect* tempRect = nullptr;
 	Button* tempButton = nullptr;
 	
-	tempButton = new Button("Start", new SDL_Rect{ 540,100,200,50 });
-	tempButton->AddBackground(200, 50, SDL_Color{ 255,229,204 });
-	tempButton->AddLabel("Start", { 0, 0, 0, 255 });
+	tempRect = new SDL_Rect{ 540,100,200,100 };
+	tempButton = new Button("Start", tempRect);
+	tempButton->AddTexture(new Texture(tempRect, SDL_Color{ 255,229,204 }));
+	tempButton->AddTexture(new Texture(tempRect, "Start", { 0, 0, 0, 255 }));
 	buttons.push_back(tempButton);
 	
-	tempButton = new Button("Settings", new SDL_Rect{ 10,10,50,50 });
-	tempButton->AddImage("data/settings.png");
+	tempRect = new SDL_Rect{ 10,10,50,50 };
+	tempButton = new Button("Settings", tempRect);
+	tempButton->AddTexture(new Texture(tempRect, "data/settings.png"));
 	buttons.push_back(tempButton);
 
-	tempButton = new Button("ChangeBackSide", new SDL_Rect{ 70,10,150,50 });
-	tempButton->AddLabel("Change back side", { 0,0,0,255 });
+	tempRect = new SDL_Rect{ 70,10,150,50 };
+	tempButton = new Button("ChangeBackSide", tempRect);
+	tempButton->AddTexture(new Texture(tempRect, "Change back side", { 0,0,0,255 }));
 	buttons.push_back(tempButton);
 
-	tempButton = new Button("Hit", new SDL_Rect{ 1080,500,100,50 });
-	tempButton->AddLabel("Hit", { 0,0,0,255 });
+	tempRect = new SDL_Rect{ 1080,500,100,50 };
+	tempButton = new Button("Hit", tempRect);
+	tempButton->AddTexture(new Texture(tempRect, "Hit", { 0,0,0,255 }));
 	buttons.push_back(tempButton);
 
-	tempButton = new Button("Stand", new SDL_Rect{ 1080,600,100,50 });
-	tempButton->AddLabel("Stand", { 0,0,0,255 });
+	tempRect = new SDL_Rect{ 1080,600,100,50 };
+	tempButton = new Button("Stand", tempRect);
+	tempButton->AddTexture(new Texture(tempRect, "Stand", { 0,0,0,255 }));
 	buttons.push_back(tempButton);
 
 	tempButton = nullptr;
@@ -145,7 +151,7 @@ void Game::render()
 {
 	SDL_RenderClear(renderer);
 
-	SDL_RenderCopy(renderer, background->texture, background->sRect, 0);
+	background->render();
 	if (deck) deck->render();
 
 	for (auto hand : hands)

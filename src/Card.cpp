@@ -1,5 +1,4 @@
 #include "Card.h"
-#include "Game.h"
 #include <string>
 
 
@@ -30,7 +29,7 @@ Card::Card(SDL_Rect* cardRect, int cardIndex, int suit, Texture* backSideTexture
 	}
 	path += "_of_" + suitNames[suit] + ".png";
 
-	objTexture = new Texture(path.c_str());
+	objTexture = new Texture(objRect, path.c_str());
 }
 
 Card::~Card()
@@ -45,10 +44,10 @@ void Card::update()
 
 void Card::render()
 {
-	if(isFaceSide)
-		SDL_RenderCopy(Game::GetRenderer(), objTexture->texture, objTexture->sRect, objRect);
+	if (isFaceSide)
+		objTexture->render();
 	else
-		SDL_RenderCopy(Game::GetRenderer(), cardBackTexture->texture, cardBackTexture->sRect, objRect);
+		cardBackTexture->render(objRect);
 }
 
 int Card::getValue()
