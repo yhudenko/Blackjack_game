@@ -2,7 +2,7 @@
 
 Bot::Bot(SDL_Rect* dRect) : Hand(dRect)
 {
-
+	getChips();
 }
 
 Bot::~Bot()

@@ -1,7 +1,6 @@
 #pragma once
 #include "Hand.h"
-class Dealer :
-    public Hand
+class Dealer : public Hand
 {
 public:
 	Dealer(SDL_Rect* dRect);

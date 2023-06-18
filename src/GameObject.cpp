@@ -24,22 +24,22 @@ void GameObject::move(int targetX, int targetY)
 	float x = static_cast<float>(objRect->x);
 	float y = static_cast<float>(objRect->y);
 
-	for (int i = 0; i <= Game::animationFrameRate; i++)
+	for (int i = 0; i < Game::animationFrameRate; i++)
 	{
 		auto location = std::pair<int, int>(static_cast<int>(x), static_cast<int>(y));
-
 		pathPoints.push(location);
 
 		x += stepX;
 		y += stepY;
 	}
+	auto location = std::pair<int, int>(static_cast<int>(targetX), static_cast<int>(targetY));
+	pathPoints.push(location);
 }
 
 bool GameObject::UpdateLocation()
 {
 	if (pathPoints.empty())
 		return false;
-	pathPoints.front().first;
 	objRect->x = pathPoints.front().first;
 	objRect->y = pathPoints.front().second;
 	pathPoints.pop();

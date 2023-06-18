@@ -89,11 +89,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 
 	tempButton = nullptr;
 
-	hands.push_back(new Bot(new SDL_Rect{ 400,200,100,100 }));
-	playerIndex = 1;
-	hands.push_back(new Player(new SDL_Rect{ 800,200,100,100 }));
-	hands.push_back(new Dealer(new SDL_Rect{ 800,20,100,100 }));
-
 	isRunning = true;
 }
 
@@ -140,7 +135,8 @@ void Game::update()
 	SDL_GetMouseState(&mousePos->x, &mousePos->y);
 	if(deck) deck->update();
 
-	handSequence();
+	if (currentStage != gameStage::PRESTART)
+		handSequence();
 	
 	for (auto button : buttons)
 		button->update();
@@ -203,6 +199,11 @@ void Game::StartGame()
 			buttons.erase(it);
 			break;
 		}
+
+	hands.push_back(new Bot(new SDL_Rect{ 100,300,100,100 }));
+	playerIndex = 1;
+	hands.push_back(new Player(new SDL_Rect{ 350,300,100,100 }));
+	hands.push_back(new Dealer(new SDL_Rect{ 700,100,100,100 }));
 			
 	currentStage = gameStage::DISTRIBUTION;
 	deck = new Deck(1080, 100);

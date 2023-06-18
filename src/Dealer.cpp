@@ -15,8 +15,7 @@ bool Dealer::Distribution(Deck* deck)
 	switch (cards.size())
 	{
 	case 0:
-		cards.push_back(deck->GetCard(true));
-		cards.back()->move(objRect->x + 30 * static_cast<int>(cards.size()), objRect->y + 30 * static_cast<int>(cards.size()));
+		Hit(deck, true);
 		break;
 	case 1:
 		Hit(deck);

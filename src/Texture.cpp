@@ -1,6 +1,5 @@
 #include "Texture.h"
 #include "Game.h"
-#include <iostream>
 #include <SDL_ttf.h>
 
 Texture::Texture(SDL_Rect* rect, const char* imagePath, SDL_Rect* imageSRect) : dRect(rect), sRect(imageSRect)
@@ -49,7 +48,6 @@ Texture::Texture(SDL_Rect* rect, const char* labelText, SDL_Color color, float f
 			minSize = fontSize + 1;
 		else 
 			maxSize = fontSize - 1;
-		std::cout << fontSize << std::endl;
 	}
 	int wSize = 0, hSize = 0;
 	TTF_SizeText(font, labelText, &wSize, &hSize);

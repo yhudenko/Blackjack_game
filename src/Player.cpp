@@ -2,7 +2,7 @@
 
 Player::Player(SDL_Rect* dRect) : Hand(dRect)
 {
-
+	getChips();
 }
 
 Player::~Player()

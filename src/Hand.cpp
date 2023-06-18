@@ -2,10 +2,7 @@
 
 Hand::Hand(SDL_Rect* dRect) : BaseObject(dRect)
 {
-	for (int i = 0; i < 10; ++i)
-	{
-		//chips.push_back(new Chip(dRect));
-	}
+	
 }
 
 Hand::~Hand()
@@ -13,12 +10,17 @@ Hand::~Hand()
 	for (auto card : cards)
 		delete card;
 	cards.clear();
+	for (auto chip : chips)
+		delete chip;
+	chips.clear();
 }
 
 void Hand::update()
 {
 	for (auto card : cards)
 		card->update();
+	for (auto chip : chips)
+		chip->update();
 
 	if (currentTurn)
 		cardMoving = cards.back()->isMoving;
@@ -26,14 +28,20 @@ void Hand::update()
 
 void Hand::render()
 {
+	//Avoid overlapping cards
+	for (auto chip : chips)
+		chip->render();
+
 	for (auto card : cards)
 		card->render();
 }
 
-void Hand::Hit(Deck* deck)
+void Hand::Hit(Deck* deck, bool hidden)
 {
-	cards.push_back(deck->GetCard());
-	cards.back()->move(objRect->x + 30 * cards.size(), objRect->y + 30 * cards.size());
+	int xPos = objRect->x + 30 * static_cast<int>(cards.size());
+	int yPos = objRect->y + 30 * static_cast<int>(cards.size());
+	cards.push_back(deck->GetCard(hidden));
+	cards.back()->move(xPos, yPos);
 	int currentValue = calculateValue();
 	if (currentValue == 21)
 		status = HandStatus::WIN;
@@ -45,6 +53,16 @@ void Hand::Hit(Deck* deck)
 void Hand::Stand()
 {
 	status = HandStatus::WAITRESULT;
+}
+
+void Hand::getChips()
+{
+	for (int i = 0; i < 10; ++i)
+	{
+		int xPos = objRect->x + objRect->w / 2;
+		int yPos = objRect->y - i * 9;
+		chips.push_back(new Chip(xPos, yPos));
+	}
 }
 
 int Hand::calculateValue()

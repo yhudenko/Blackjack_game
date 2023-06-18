@@ -31,9 +31,11 @@ public:
 	virtual bool Distribution(Deck* deck) = 0;
 	virtual void Turn(Deck* deck) = 0;
 
-	void Hit(Deck* deck);
+	void Hit(Deck* deck, bool hidden = false);
 	void Stand();
+	void getChips();
 protected:
+	Texture* nameLabel = nullptr;
 	std::vector<Card*> cards;
 	std::vector<Chip*> chips;
 
