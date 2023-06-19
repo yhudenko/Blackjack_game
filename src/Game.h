@@ -5,7 +5,6 @@
 #include <SDL_ttf.h>
 #include <iostream>
 #include <vector>
-#include <map>
 #include "Deck.h"
 #include "Hand.h"
 #include "Button.h"
@@ -36,11 +35,14 @@ private:
 		PRESTART = 0,
 		DISTRIBUTION,
 		TURNS,
-		RESULTS
+		RESULTS,
+		ROUNDEND
 	}currentStage = gameStage::PRESTART;
 	static SDL_Window* window;
 	static SDL_Renderer* renderer;
 	Texture* background = nullptr;
+	Texture* currentTurnHeader = nullptr;
+	Texture* currentTurn = nullptr;
 
 	Deck* deck = nullptr;
 	std::vector<Hand*> hands;
@@ -52,6 +54,9 @@ private:
 	void StartGame();
 	void NextDistribution();
 	void NextTurn();
+	void changeCurrentTurnLabel();
+	void CheckTurnEnded();
+	void ShowResults();
 
 };
 

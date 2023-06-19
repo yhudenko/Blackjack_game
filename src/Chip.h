@@ -1,6 +1,9 @@
 #pragma once
 #include "GameObject.h"
 
+const int CHIP_WIDTH = 80;
+const int CHIP_HEIGHT = 70;
+
 class Chip : public GameObject
 {
 public:

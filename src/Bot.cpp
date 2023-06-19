@@ -1,8 +1,8 @@
 #include "Bot.h"
 
-Bot::Bot(SDL_Rect* dRect) : Hand(dRect)
+Bot::Bot(SDL_Rect* dRect, std::string name) : Hand(dRect, name)
 {
-	getChips();
+	getChips(10);
 }
 
 Bot::~Bot()
@@ -13,15 +13,27 @@ Bot::~Bot()
 bool Bot::Distribution(Deck* deck)
 {
 	Hit(deck);
-	endTurn = true;
 	return false;
 }
 
-void Bot::Turn(Deck* deck)
+void Bot::Turn(Deck* deck, Hand* dealer)
 {
 	if (calculateValue() < 17)
+	{
+		BetChip();
 		Hit(deck);
+	}
 	else
-		Stand();
+	{
+		if (dealer->calculateValue() <= 7 && dealer->getHandSize() == 2)
+		{
+			BetChip();
+			Hit(deck);
+		}
+		else
+			Stand();
+	}
 	endTurn = true;
 }
+
+

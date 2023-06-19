@@ -32,6 +32,7 @@ Deck::~Deck()
     cardDeck.clear();
 
     delete cardBackSideTexture;
+    cardBackSideTexture = nullptr;
 }
 
 void Deck::update()

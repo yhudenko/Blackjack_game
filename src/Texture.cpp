@@ -12,9 +12,9 @@ Texture::Texture(SDL_Rect* rect, const char* imagePath, SDL_Rect* imageSRect) : 
 Texture::Texture(SDL_Rect* rect, const char* labelText, SDL_Color color, float fillPercent) : dRect(rect)
 {
 	sRect = nullptr;
-
-	int maxH = rect->h * fillPercent;
-	int maxW = rect->w * fillPercent;
+	
+	int maxH = static_cast<int>(static_cast<float>(rect->h) * fillPercent);
+	int maxW = static_cast<int>(static_cast<float>(rect->w) * fillPercent);
 	
 	int minSize = 20;  // Minimum font size
 	int maxSize = 200; // Maximum font size
@@ -70,7 +70,10 @@ Texture::Texture(SDL_Rect* rect, SDL_Color color) : dRect(rect)
 Texture::~Texture()
 {
 	delete sRect;
+	delete offsetRect;
+	offsetRect = nullptr;
 	SDL_DestroyTexture(texture);
+	texture = nullptr;
 }
 
 void Texture::render()
@@ -78,6 +81,19 @@ void Texture::render()
 	if (offsetRect)
 	{
 		SDL_Rect destRect = { dRect->x + offsetRect->x,  dRect->y + offsetRect->y, dRect->w + offsetRect->w, dRect->h + offsetRect->h };
+		SDL_RenderCopy(Game::GetRenderer(), texture, sRect, &destRect);
+	}
+	else
+	{
+		SDL_RenderCopy(Game::GetRenderer(), texture, sRect, dRect);
+	}
+}
+
+void Texture::render(int xPos, int yPos)
+{
+	if (offsetRect)
+	{
+		SDL_Rect destRect = { xPos + offsetRect->x,  yPos + offsetRect->y, dRect->w + offsetRect->w, dRect->h + offsetRect->h };
 		SDL_RenderCopy(Game::GetRenderer(), texture, sRect, &destRect);
 	}
 	else

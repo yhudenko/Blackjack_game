@@ -19,7 +19,11 @@ Game::~Game()
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	delete background;
+	background = nullptr;
+	delete currentTurn;
+	currentTurn = nullptr;
 	delete deck;
+	deck = nullptr;
 	SDL_Quit();
 	std::cout << "Game cleaned" << std::endl;
 }
@@ -64,7 +68,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 	tempRect = new SDL_Rect{ 540,100,200,100 };
 	tempButton = new Button("Start", tempRect);
 	tempButton->AddTexture(new Texture(tempRect, SDL_Color{ 255,229,204 }));
-	tempButton->AddTexture(new Texture(tempRect, "Start", { 0, 0, 0, 255 }));
+	tempButton->AddTexture(new Texture(tempRect, "Start", SDL_Color{ 0, 0, 0}));
 	buttons.push_back(tempButton);
 	
 	tempRect = new SDL_Rect{ 10,10,50,50 };
@@ -74,17 +78,22 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 
 	tempRect = new SDL_Rect{ 70,10,150,50 };
 	tempButton = new Button("ChangeBackSide", tempRect);
-	tempButton->AddTexture(new Texture(tempRect, "Change back side", { 0,0,0,255 }));
+	tempButton->AddTexture(new Texture(tempRect, "Change back side", SDL_Color{ 0,0,0 }));
 	buttons.push_back(tempButton);
 
 	tempRect = new SDL_Rect{ 1080,500,100,50 };
 	tempButton = new Button("Hit", tempRect);
-	tempButton->AddTexture(new Texture(tempRect, "Hit", { 0,0,0,255 }));
+	tempButton->AddTexture(new Texture(tempRect, "Hit", SDL_Color{ 0,0,0 }));
+	buttons.push_back(tempButton);
+
+	tempRect = new SDL_Rect{ 1080,550,100,50 };
+	tempButton = new Button("Stand", tempRect);
+	tempButton->AddTexture(new Texture(tempRect, "Stand", SDL_Color{ 0,0,0 }));
 	buttons.push_back(tempButton);
 
 	tempRect = new SDL_Rect{ 1080,600,100,50 };
-	tempButton = new Button("Stand", tempRect);
-	tempButton->AddTexture(new Texture(tempRect, "Stand", { 0,0,0,255 }));
+	tempButton = new Button("Bet", tempRect);
+	tempButton->AddTexture(new Texture(tempRect, "Bet 100$", SDL_Color{ 0,0,0 }));
 	buttons.push_back(tempButton);
 
 	tempButton = nullptr;
@@ -120,8 +129,10 @@ void Game::handleEvents()
 						if(deck) deck->ChangeCardBackSide();
 					if (button->name == "Hit" && handIndex == playerIndex)
 						hands.at(playerIndex)->Hit(deck);
-					if (button->name == "Stand")
-						return;
+					if (button->name == "Stand" && handIndex == playerIndex)
+						hands.at(playerIndex)->Stand();
+					if (button->name == "Bet" && handIndex == playerIndex)
+						hands.at(playerIndex)->BetChip();
 				}
 			}
 		break;
@@ -155,7 +166,9 @@ void Game::render()
 
 	for (auto button : buttons)
 		button->render();
-
+	
+	if (currentTurnHeader) currentTurnHeader->render();
+	if(currentTurn) currentTurn->render(1080, 50);
 	SDL_RenderPresent(renderer);
 }
 
@@ -172,7 +185,7 @@ SDL_Renderer* Game::GetRenderer()
 void Game::handSequence()
 {
 	hands.at(handIndex)->update();
-	if (hands.at(handIndex)->endTurn && !hands.at(handIndex)->cardMoving)
+	if (!hands.at(handIndex)->somethingMoving)
 	{
 		switch (currentStage)
 		{
@@ -180,14 +193,18 @@ void Game::handSequence()
 			NextDistribution();
 			break;
 		case Game::gameStage::TURNS:
-			NextTurn();
+			if (hands.at(handIndex)->endTurn)
+				NextTurn();
+			CheckTurnEnded();
 			break;
 		case Game::gameStage::RESULTS:
+			ShowResults();
 			break;
 		default:
 			break;
 		}
 	}
+	
 }
 
 void Game::StartGame()
@@ -200,45 +217,86 @@ void Game::StartGame()
 			break;
 		}
 
-	hands.push_back(new Bot(new SDL_Rect{ 100,300,100,100 }));
+	hands.push_back(new Bot(new SDL_Rect{ 100,300,100,100 }, "Jack BOT"));
 	playerIndex = 1;
-	hands.push_back(new Player(new SDL_Rect{ 350,300,100,100 }));
-	hands.push_back(new Dealer(new SDL_Rect{ 700,100,100,100 }));
+	hands.push_back(new Player(new SDL_Rect{ 350,300,100,100 }, "Player"));
+	hands.push_back(new Dealer(new SDL_Rect{ 700,100,100,100 }, "Dealer"));
 			
 	currentStage = gameStage::DISTRIBUTION;
 	deck = new Deck(1080, 100);
-	hands.at(handIndex)->currentTurn = true;
+	currentTurnHeader = new Texture(new SDL_Rect{ 1080,20,100,50 }, "Wating for:", SDL_Color{ 0,0,0 });
+	changeCurrentTurnLabel();
 	hands.at(handIndex)->Distribution(deck);
 }
 
 void Game::NextDistribution()
 {
-	hands.at(handIndex)->currentTurn = false;
 	hands.at(handIndex)->endTurn = false;
 	if ((handIndex + 1) < static_cast<int>(hands.size()))
 		++handIndex;
 	else
 		handIndex = 0;
 
-	hands.at(handIndex)->currentTurn = true;
+	changeCurrentTurnLabel();
 	if (hands.at(handIndex)->Distribution(deck))
+	{
 		currentStage = gameStage::TURNS;
-
+		hands.at(handIndex)->endTurn = true;
+	}
 }
 
 void Game::NextTurn()
 {
-	hands.at(handIndex)->currentTurn = false;
 	hands.at(handIndex)->endTurn = false;
 	if (handIndex + 1 < static_cast<int>(hands.size()))
 		++handIndex;
 	else
 		handIndex = 0;
-	hands.at(handIndex)->currentTurn = true;
-	if(hands.at(handIndex)->status == HandStatus::PLAYING)
-		hands.at(handIndex)->Turn(deck);
+	changeCurrentTurnLabel();
+	if (hands.at(handIndex)->status == HandStatus::PLAYING)
+		hands.at(handIndex)->Turn(deck, hands.back());
+	else
+		hands.at(handIndex)->endTurn = true;
+}
 
-	std::cout << handIndex << std::endl;
+void Game::changeCurrentTurnLabel()
+{
+	currentTurn = hands.at(handIndex)->getNameLabel();
+}
+
+void Game::CheckTurnEnded()
+{
+	bool playing = false;
+	for (auto hand : hands)
+		playing = playing || hand->status == HandStatus::PLAYING;
+	if (!playing)
+	{
+		currentStage = gameStage::RESULTS;
+		hands.back()->Results();
+		hands.at(handIndex)->endTurn = true;
+		handIndex = 0;
+		changeCurrentTurnLabel();
+		int dealerValue = hands.back()->calculateValue();
+		hands.at(handIndex)->Results(dealerValue);
+	}
+}
+
+void Game::ShowResults()
+{
+	hands.at(handIndex)->endTurn = false;
+	if (handIndex + 1 < static_cast<int>(hands.size() - 1))
+	{
+		++handIndex;
+		changeCurrentTurnLabel();
+		int dealerValue = hands.back()->calculateValue();
+		hands.at(handIndex)->Results(dealerValue);
+	}
+	else
+	{
+		hands.at(handIndex)->endTurn = true;
+		currentStage = gameStage::ROUNDEND;
+		handIndex = playerIndex;
+	}		
 }
 
 

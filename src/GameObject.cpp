@@ -9,6 +9,7 @@ GameObject::GameObject(SDL_Rect* rect) : BaseObject(rect)
 GameObject::~GameObject()
 {
 	delete objTexture;
+	objTexture = nullptr;
 	while (!pathPoints.empty())
 		pathPoints.pop();
 }

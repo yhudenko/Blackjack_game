@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include "Card.h"
 #include "BaseObject.h"
 #include "Deck.h"
@@ -11,35 +12,42 @@ enum class HandStatus
 	PLAYING,
 	WAITRESULT,
 	WIN,
-	LOSE
+	LOSE,
+	DRAW
 };
 
 class Hand : public BaseObject
 {
 public:
-	Hand(SDL_Rect* dRect);
+	Hand(SDL_Rect* dRect, std::string name);
 	~Hand();
 
 	HandStatus status = HandStatus::PLAYING;
-	bool currentTurn = false;
 	bool endTurn = false;
-	bool cardMoving = false;
+	bool somethingMoving = false;
 
 	void update() override;
 	void render() override;
 
 	virtual bool Distribution(Deck* deck) = 0;
-	virtual void Turn(Deck* deck) = 0;
+	virtual void Turn(Deck* deck, Hand* dealer) = 0;
+	virtual HandStatus Results(int dealerValue = 0);
 
 	void Hit(Deck* deck, bool hidden = false);
 	void Stand();
-	void getChips();
+	void getChips(int count);
+	Texture* getNameLabel();
+	void BetChip();
+	int getHandSize();
+	int calculateValue(bool includeHidden = false);
 protected:
 	Texture* nameLabel = nullptr;
+	Texture* resultLabel = nullptr;
 	std::vector<Card*> cards;
-	std::vector<Chip*> chips;
-
-	int calculateValue();
+	std::deque<Chip*> chips;
+	std::deque<Chip*> bet;
+	int chipsBaseXPos = 0;
+	int chipsBaseYPos = 0;
 };
 
 

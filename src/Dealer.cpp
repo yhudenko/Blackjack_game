@@ -1,6 +1,6 @@
 #include "Dealer.h"
-
-Dealer::Dealer(SDL_Rect* dRect) : Hand(dRect)
+#include <iostream>
+Dealer::Dealer(SDL_Rect* dRect, std::string name) : Hand(dRect, name)
 {
 
 }
@@ -25,19 +25,24 @@ bool Dealer::Distribution(Deck* deck)
 	default:
 		break;
 	}
-	endTurn = true;
 	return false;
 }
 
-void Dealer::Turn(Deck* deck)
+void Dealer::Turn(Deck* deck, Hand* dealer)
 {
-	if (calculateValue() < 17)
-	{
-		cards.push_back(deck->GetCard());
-		cards.back()->move(objRect->x + 30 * static_cast<int>(cards.size()), objRect->y + 30 * static_cast<int>(cards.size()));
-	}
+	if (calculateValue(true) < 17)
+		Hit(deck);
 	else
 		Stand();
 	endTurn = true;
 }
+
+HandStatus Dealer::Results(int dealerValue)
+{
+	cards.front()->isFaceSide = true;
+	if (calculateValue() > 21)
+		status = HandStatus::LOSE;
+	return status;
+}
+
 

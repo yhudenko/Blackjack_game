@@ -11,6 +11,7 @@ public:
 	~Texture();
 
 	void render();
+	void render(int xPos, int yPos);
 	void render(SDL_Rect* rect);
 	void changeSRect(SDL_Rect& rect);
 
