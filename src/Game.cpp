@@ -24,6 +24,9 @@ Game::~Game()
 	currentTurn = nullptr;
 	delete deck;
 	deck = nullptr;
+	for (auto button : buttons)
+		delete button;
+	buttons.clear();
 	SDL_Quit();
 	std::cout << "Game cleaned" << std::endl;
 }
@@ -76,11 +79,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 	tempButton->AddTexture(new Texture(tempRect, "data/settings.png"));
 	buttons.push_back(tempButton);
 
-	tempRect = new SDL_Rect{ 70,10,150,50 };
-	tempButton = new Button("ChangeBackSide", tempRect);
-	tempButton->AddTexture(new Texture(tempRect, "Change back side", SDL_Color{ 0,0,0 }));
-	buttons.push_back(tempButton);
-
 	tempRect = new SDL_Rect{ 1080,500,100,50 };
 	tempButton = new Button("Hit", tempRect);
 	tempButton->AddTexture(new Texture(tempRect, "Hit", SDL_Color{ 0,0,0 }));
@@ -97,6 +95,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 	buttons.push_back(tempButton);
 
 	tempButton = nullptr;
+	settings = new Settings();
 
 	isRunning = true;
 }
@@ -118,23 +117,38 @@ void Game::handleEvents()
 			break;
 		}
 	case SDL_MOUSEBUTTONUP:
-		if(currentEvent.button.button == SDL_BUTTON_LEFT)
+		if (currentEvent.button.button == SDL_BUTTON_LEFT)
+		{
+			if (settings) settings->mouseClicked();
 			for (auto button : buttons)
 			{
 				if (button->isSelected)
 				{
 					if (button->name == "Start" && currentStage == gameStage::PRESTART)
 						StartGame();
-					if (button->name == "ChangeBackSide")
-						if(deck) deck->ChangeCardBackSide();
+					if (button->name == "Settings")
+						settings->toggleVisibility();
 					if (button->name == "Hit" && handIndex == playerIndex)
 						hands.at(playerIndex)->Hit(deck);
 					if (button->name == "Stand" && handIndex == playerIndex)
 						hands.at(playerIndex)->Stand();
 					if (button->name == "Bet" && handIndex == playerIndex)
 						hands.at(playerIndex)->BetChip();
+					if (button->name == "Continue")
+					{
+						if (buttons.back()->name == "Continue")
+							buttons.pop_back();
+						delete button;
+
+						ClearHands();
+						currentStage = gameStage::DISTRIBUTION;
+						handIndex = 0;
+						changeCurrentTurnLabel();
+						hands.at(handIndex)->Distribution(deck);
+					}
 				}
 			}
+		}
 		break;
 	default:
 		break;
@@ -144,6 +158,8 @@ void Game::handleEvents()
 void Game::update()
 {
 	SDL_GetMouseState(&mousePos->x, &mousePos->y);
+	if (settings) settings->update();
+
 	if(deck) deck->update();
 
 	if (currentStage != gameStage::PRESTART)
@@ -160,6 +176,8 @@ void Game::render()
 
 	background->render();
 	if (deck) deck->render();
+
+	if (settings) settings->render();
 
 	for (auto hand : hands)
 		hand->render();
@@ -224,6 +242,7 @@ void Game::StartGame()
 			
 	currentStage = gameStage::DISTRIBUTION;
 	deck = new Deck(1080, 100);
+	Settings::deck = deck;
 	currentTurnHeader = new Texture(new SDL_Rect{ 1080,20,100,50 }, "Wating for:", SDL_Color{ 0,0,0 });
 	changeCurrentTurnLabel();
 	hands.at(handIndex)->Distribution(deck);
@@ -296,7 +315,21 @@ void Game::ShowResults()
 		hands.at(handIndex)->endTurn = true;
 		currentStage = gameStage::ROUNDEND;
 		handIndex = playerIndex;
+
+		SDL_Rect* tempRect = nullptr;
+		Button* tempButton = nullptr;
+
+		tempRect = new SDL_Rect{ 700,400,200,100 };
+		tempButton = new Button("Continue", tempRect);
+		tempButton->AddTexture(new Texture(tempRect, "Continue", SDL_Color{ 0,0,0 }));
+		buttons.push_back(tempButton);
 	}		
+}
+
+void Game::ClearHands()
+{
+	for (auto hand : hands)
+		hand->clear();
 }
 
 

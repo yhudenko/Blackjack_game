@@ -19,6 +19,7 @@ private:
 	int cardBackSideIndex = 0;
 	Texture* cardBackSideTexture;
 
+	void createDeck();
 	void shuffleDeck();
 };
 

@@ -18,6 +18,8 @@ bool Bot::Distribution(Deck* deck)
 
 void Bot::Turn(Deck* deck, Hand* dealer)
 {
+	if (bet.empty())
+		BetChip();
 	if (calculateValue() < 17)
 	{
 		BetChip();

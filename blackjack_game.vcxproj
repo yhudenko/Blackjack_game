@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\Chip.cpp" />
     <ClCompile Include="src\Bot.cpp" />
     <ClCompile Include="src\Dealer.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Settings.h" />
     <ClInclude Include="src\Chip.h" />
     <ClInclude Include="src\Bot.h" />
     <ClInclude Include="src\Dealer.h" />

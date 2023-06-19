@@ -18,7 +18,8 @@ bool Player::Distribution(Deck* deck)
 
 void Player::Turn(Deck* deck, Hand* dealer)
 {
-	
+	if (bet.empty() && !chips.empty())
+		BetChip();
 }
 
 

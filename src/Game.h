@@ -9,6 +9,7 @@
 #include "Hand.h"
 #include "Button.h"
 #include "Texture.h"
+#include "Settings.h"
 
 class Game
 {
@@ -43,6 +44,7 @@ private:
 	Texture* background = nullptr;
 	Texture* currentTurnHeader = nullptr;
 	Texture* currentTurn = nullptr;
+	Settings* settings = nullptr;
 
 	Deck* deck = nullptr;
 	std::vector<Hand*> hands;
@@ -57,6 +59,7 @@ private:
 	void changeCurrentTurnLabel();
 	void CheckTurnEnded();
 	void ShowResults();
+	void ClearHands();
 
 };
 

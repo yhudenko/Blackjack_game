@@ -145,6 +145,11 @@ Texture* Hand::getNameLabel()
 
 void Hand::BetChip()
 {
+	if (chips.empty())
+	{
+		status = HandStatus::LOSE;
+		return;
+	}
 	Chip* chip = chips.back();
 	chips.pop_back();
 	
@@ -175,4 +180,14 @@ int Hand::calculateValue(bool includeHidden)
 		totalValue = ((totalValue + 10) <= 21) ? totalValue + 10 : totalValue;
 
 	return totalValue;
+}
+
+void Hand::clear()
+{
+	status = HandStatus::PLAYING;
+	for (auto card : cards)
+		delete card;
+	cards.clear();
+	delete resultLabel;
+	resultLabel = nullptr;
 }

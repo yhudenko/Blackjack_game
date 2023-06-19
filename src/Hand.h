@@ -40,6 +40,7 @@ public:
 	void BetChip();
 	int getHandSize();
 	int calculateValue(bool includeHidden = false);
+	void clear();
 protected:
 	Texture* nameLabel = nullptr;
 	Texture* resultLabel = nullptr;

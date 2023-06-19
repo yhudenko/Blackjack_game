@@ -12,16 +12,7 @@ Deck::Deck(const int xPos, const int yPos) : BaseObject(new SDL_Rect{ xPos,yPos,
 {
     cardBackSideTexture = new Texture(objRect, "data/Card_back.png", new SDL_Rect(dictionaryCardBackSideRect[cardBackSideIndex]));
 
-    int xCardOffset = 0, yCardOffset = 0;
-    for (int suit = 0; suit < 4; ++suit)
-    {
-        for (int cardIndex = 1; cardIndex <= 13; ++cardIndex)
-        {
-            cardDeck.push_back(new Card(new SDL_Rect{ xPos + xCardOffset, yPos - yCardOffset, CARD_WIDTH, CARD_HEIGHT }, cardIndex, suit, cardBackSideTexture));
-            ++xCardOffset;
-            ++yCardOffset;
-        }
-    }
+    createDeck();
     shuffleDeck();
 }
 
@@ -49,6 +40,8 @@ void Deck::render()
 
 Card* Deck::GetCard(bool hidden)
 {
+    if (cardDeck.empty())
+        createDeck();
     Card* tempCard = cardDeck.back();
     cardDeck.pop_back();
 
@@ -68,6 +61,20 @@ void Deck::ChangeCardBackSide()
     }
 
     cardBackSideTexture->changeSRect(search->second);
+}
+
+void Deck::createDeck()
+{
+    int xCardOffset = 0, yCardOffset = 0;
+    for (int suit = 0; suit < 4; ++suit)
+    {
+        for (int cardIndex = 1; cardIndex <= 13; ++cardIndex)
+        {
+            cardDeck.push_back(new Card(new SDL_Rect{ objRect->x + xCardOffset, objRect->y - yCardOffset, CARD_WIDTH, CARD_HEIGHT }, cardIndex, suit, cardBackSideTexture));
+            ++xCardOffset;
+            ++yCardOffset;
+        }
+    }
 }
 
 void Deck::shuffleDeck()
