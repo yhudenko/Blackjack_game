@@ -38,4 +38,11 @@ void Bot::Turn(Deck* deck, Hand* dealer)
 	endTurn = true;
 }
 
+bool Bot::CanContinue()
+{
+	if (chips.empty())
+		getChips(10);
+	return true;
+}
+
 

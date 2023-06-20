@@ -25,7 +25,7 @@ int main(int argc, char* args[])
 			SDL_Delay(targetFrameTime - frameTime);
 	}
 
-	game->~Game();
+	delete game;
 
 	return 0;
 }

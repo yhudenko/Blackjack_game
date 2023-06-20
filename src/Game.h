@@ -1,8 +1,6 @@
 #pragma once
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+#include "SDL_Engine.h"
 #include <iostream>
 #include <vector>
 #include "Deck.h"
@@ -24,11 +22,6 @@ public:
 
 	bool running() { return isRunning; };
 
-	static SDL_Window* GetWindow();
-	static SDL_Renderer* GetRenderer();
-	static int animationFrameRate;
-	static SDL_Rect* mousePos;
-
 private:
 	bool isRunning = false;
 	enum class gameStage
@@ -39,9 +32,8 @@ private:
 		RESULTS,
 		ROUNDEND
 	}currentStage = gameStage::PRESTART;
-	static SDL_Window* window;
-	static SDL_Renderer* renderer;
 	Texture* background = nullptr;
+	Mix_Music* backgroundMusic = nullptr;
 	Texture* currentTurnHeader = nullptr;
 	Texture* currentTurn = nullptr;
 	Settings* settings = nullptr;

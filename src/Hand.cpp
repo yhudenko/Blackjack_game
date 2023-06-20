@@ -114,6 +114,11 @@ HandStatus Hand::Results(int dealerValue)
 	return status;
 }
 
+bool Hand::CanContinue()
+{
+	return true;
+}
+
 void Hand::Hit(Deck* deck, bool hidden)
 {
 	int xPos = objRect->x + 30 * static_cast<int>(cards.size());

@@ -22,6 +22,14 @@ void Player::Turn(Deck* deck, Hand* dealer)
 		BetChip();
 }
 
+bool Player::CanContinue()
+{
+	if (chips.empty())
+		return false;
+	else
+		return true;
+}
+
 
 
 

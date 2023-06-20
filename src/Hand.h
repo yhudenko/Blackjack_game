@@ -32,6 +32,7 @@ public:
 	virtual bool Distribution(Deck* deck) = 0;
 	virtual void Turn(Deck* deck, Hand* dealer) = 0;
 	virtual HandStatus Results(int dealerValue = 0);
+	virtual bool CanContinue();
 
 	void Hit(Deck* deck, bool hidden = false);
 	void Stand();

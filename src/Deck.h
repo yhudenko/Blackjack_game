@@ -13,13 +13,14 @@ public:
 
 	Card* GetCard(bool hidden = false);
 	void ChangeCardBackSide();
+	void Clear();
+	void CreateDeck();
 
 private:
 	std::deque<Card*> cardDeck;
 	int cardBackSideIndex = 0;
 	Texture* cardBackSideTexture;
 
-	void createDeck();
 	void shuffleDeck();
 };
 

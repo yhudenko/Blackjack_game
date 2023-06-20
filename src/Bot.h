@@ -8,6 +8,7 @@ public:
 
 	bool Distribution(Deck* deck) override;
 	void Turn(Deck* deck, Hand* dealer) override;
+	bool CanContinue() override;
 
 protected:
 

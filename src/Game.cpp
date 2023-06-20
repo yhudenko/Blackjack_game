@@ -3,12 +3,6 @@
 #include "Bot.h"
 #include "Dealer.h"
 
-
-SDL_Window* Game::window = nullptr;
-SDL_Renderer* Game::renderer = nullptr;
-int Game::animationFrameRate = 60;
-SDL_Rect* Game::mousePos = nullptr;
-
 Game::Game()
 {
 
@@ -16,10 +10,10 @@ Game::Game()
 
 Game::~Game()
 {
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
 	delete background;
 	background = nullptr;
+	Mix_FreeMusic(backgroundMusic);
+	backgroundMusic = nullptr;
 	delete currentTurn;
 	currentTurn = nullptr;
 	delete deck;
@@ -27,43 +21,23 @@ Game::~Game()
 	for (auto button : buttons)
 		delete button;
 	buttons.clear();
-	SDL_Quit();
+
+	delete SDL_Engine::Instance();
 	std::cout << "Game cleaned" << std::endl;
 }
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, Uint32 flags)
 {
-	//Initialize the SDL library
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+	SDL_Engine::Instance()->CreateWindow(title, xpos, ypos, width, height, flags);
+	if (SDL_Engine::Instance()->Running() == false)
 	{
-		std::cout << "SDL_Init Fail" << std::endl;
+		isRunning = false;
 		return;
 	}
-	std::cout << "SDL Running..." << std::endl;
-
-	//Create a window with the specified position, dimensions, and flags
-	window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
-	if (!window)
-	{
-		std::cout << "SDL_CreateWindow Fail" << std::endl;
-		return;
-	}
-	std::cout << "Window created" << std::endl;
-
-	//Create a 2D rendering context for a window
-	renderer = SDL_CreateRenderer(window, -1, 0);
-	if (!renderer)
-	{
-		std::cout << "SDL_CreateRenderer Fail" << std::endl;
-		return;
-	}
-	std::cout << "Renderer created" << std::endl;
 	
-	TTF_Init();
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-	mousePos = new SDL_Rect{ 0,0,1,1 };
 	background = new Texture(nullptr, "data/Background.jpg");
+	backgroundMusic = Mix_LoadMUS("data/BackgroundMusic.mp3");
+	Mix_PlayMusic(backgroundMusic, -1);
 	
 	SDL_Rect* tempRect = nullptr;
 	Button* tempButton = nullptr;
@@ -71,13 +45,11 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 	tempRect = new SDL_Rect{ 540,100,200,100 };
 	tempButton = new Button("Start", tempRect);
 	tempButton->AddTexture(new Texture(tempRect, SDL_Color{ 255,229,204 }));
-	tempButton->AddTexture(new Texture(tempRect, "Start", SDL_Color{ 0, 0, 0}));
+	tempButton->AddTexture(new Texture(tempRect, "Start", SDL_Color{ 0, 0, 0}, 0.6f));
 	buttons.push_back(tempButton);
 	
 	tempRect = new SDL_Rect{ 10,10,50,50 };
-	tempButton = new Button("Settings", tempRect);
-	tempButton->AddTexture(new Texture(tempRect, "data/settings.png"));
-	buttons.push_back(tempButton);
+	settings = new Settings("Settings", tempRect);
 
 	tempRect = new SDL_Rect{ 1080,500,100,50 };
 	tempButton = new Button("Hit", tempRect);
@@ -95,7 +67,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, Ui
 	buttons.push_back(tempButton);
 
 	tempButton = nullptr;
-	settings = new Settings();
+	
 
 	isRunning = true;
 }
@@ -109,13 +81,6 @@ void Game::handleEvents()
 	case SDL_QUIT:
 		isRunning = false;
 		break;
-	case SDL_KEYDOWN:
-		switch (currentEvent.key.keysym.sym)
-		{
-		case SDLK_UP:
-			//Test
-			break;
-		}
 	case SDL_MOUSEBUTTONUP:
 		if (currentEvent.button.button == SDL_BUTTON_LEFT)
 		{
@@ -124,6 +89,7 @@ void Game::handleEvents()
 			{
 				if (button->isSelected)
 				{
+					button->ButtonClicked();
 					if (button->name == "Start" && currentStage == gameStage::PRESTART)
 						StartGame();
 					if (button->name == "Settings")
@@ -146,6 +112,22 @@ void Game::handleEvents()
 						changeCurrentTurnLabel();
 						hands.at(handIndex)->Distribution(deck);
 					}
+					if(button->name == "Restart")
+					{
+						if (buttons.back()->name == "Restart")
+							buttons.pop_back();
+						delete button;
+
+						ClearHands();
+						deck->Clear();
+						deck->CreateDeck();
+						hands.at(handIndex)->getChips(10);
+
+						currentStage = gameStage::DISTRIBUTION;
+						handIndex = 0;
+						changeCurrentTurnLabel();
+						hands.at(handIndex)->Distribution(deck);
+					}
 				}
 			}
 		}
@@ -157,7 +139,8 @@ void Game::handleEvents()
 
 void Game::update()
 {
-	SDL_GetMouseState(&mousePos->x, &mousePos->y);
+	SDL_Engine::Instance()->UpdateMousePos();
+	
 	if (settings) settings->update();
 
 	if(deck) deck->update();
@@ -172,7 +155,7 @@ void Game::update()
 
 void Game::render()
 {
-	SDL_RenderClear(renderer);
+	SDL_RenderClear(SDL_Engine::Instance()->GetRenderer());
 
 	background->render();
 	if (deck) deck->render();
@@ -186,18 +169,8 @@ void Game::render()
 		button->render();
 	
 	if (currentTurnHeader) currentTurnHeader->render();
-	if(currentTurn) currentTurn->render(1080, 50);
-	SDL_RenderPresent(renderer);
-}
-
-SDL_Window* Game::GetWindow()
-{
-	return window;
-}
-
-SDL_Renderer* Game::GetRenderer()
-{
-	return renderer;
+	if(currentTurn) currentTurn->render(1080, 275);
+	SDL_RenderPresent(SDL_Engine::Instance()->GetRenderer());
 }
 
 void Game::handSequence()
@@ -243,7 +216,7 @@ void Game::StartGame()
 	currentStage = gameStage::DISTRIBUTION;
 	deck = new Deck(1080, 100);
 	Settings::deck = deck;
-	currentTurnHeader = new Texture(new SDL_Rect{ 1080,20,100,50 }, "Wating for:", SDL_Color{ 0,0,0 });
+	currentTurnHeader = new Texture(new SDL_Rect{ 1080,250,100,50 }, "Wating for:", SDL_Color{ 0,0,0 });
 	changeCurrentTurnLabel();
 	hands.at(handIndex)->Distribution(deck);
 }
@@ -318,11 +291,26 @@ void Game::ShowResults()
 
 		SDL_Rect* tempRect = nullptr;
 		Button* tempButton = nullptr;
-
-		tempRect = new SDL_Rect{ 700,400,200,100 };
-		tempButton = new Button("Continue", tempRect);
-		tempButton->AddTexture(new Texture(tempRect, "Continue", SDL_Color{ 0,0,0 }));
-		buttons.push_back(tempButton);
+		
+		bool canContinue = true;
+		for (auto hand : hands)
+			canContinue &= hand->CanContinue();
+		if (canContinue)
+		{
+			tempRect = new SDL_Rect{ 700,400,200,100 };
+			tempButton = new Button("Continue", tempRect);
+			tempButton->AddTexture(new Texture(tempRect, SDL_Color{ 255,229,204 }));
+			tempButton->AddTexture(new Texture(tempRect, "Continue", SDL_Color{ 0,0,0 }));
+			buttons.push_back(tempButton);
+		}
+		else
+		{
+			tempRect = new SDL_Rect{ 700,400,200,100 };
+			tempButton = new Button("Restart", tempRect);
+			tempButton->AddTexture(new Texture(tempRect, SDL_Color{ 255,229,204 }));
+			tempButton->AddTexture(new Texture(tempRect, "Restart", SDL_Color{ 0,0,0 }));
+			buttons.push_back(tempButton);
+		}
 	}		
 }
 
